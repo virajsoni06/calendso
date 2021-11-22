@@ -6806,9 +6806,10 @@ react-phone-number-input@^3.1.25:
     libphonenumber-js "^1.9.26"
     prop-types "^15.7.2"
 
-react-query@^3.23.1:
-  version "3.24.4"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.24.4.tgz#20d8469cf7d6dda7c778ba6d374aa748e97e8381"
+react-query@^3.33.3:
+  version "3.33.3"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.33.3.tgz#3a9b12b2d189b88d950f81f31d7aa8224ddba1c6"
+  integrity sha512-SDuNTszxDdZdA9n241sV9hDdHgkS5TzXFar+cb4IMO9t6MU4NakSRAuwlNNmpRcFR6/yIbLwICzvOlkAXaM4KA==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"
