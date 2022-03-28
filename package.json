@@ -1,27 +1,31 @@
 {
-  "name": "calendso",
-  "version": "1.0.0",
+  "name": "calcom-monorepo",
+  "version": "0.0.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "packages/app-store/*"
+  ],
   "scripts": {
-    "analyze": "ANALYZE=true next build",
-    "analyze:server": "BUNDLE_ANALYZE=server next build",
-    "analyze:browser": "BUNDLE_ANALYZE=browser next build",
-    "dev": "next dev",
-    "db-up": "docker-compose up -d",
-    "db-migrate": "yarn prisma migrate dev",
-    "db-seed": "yarn ts-node scripts/seed.ts",
-    "db-nuke": "docker-compose down --volumes --remove-orphans",
-    "dx": "cross-env BASE_URL=http://localhost:3000 JWT_SECRET=secret DATABASE_URL=postgresql://postgres:@localhost:5450/calendso run-s db-up db-migrate db-seed dev",
-    "test": "jest",
-    "test-playwright": "jest --config jest.playwright.config.js",
-    "test-codegen": "yarn playwright codegen http://localhost:3000",
-    "type-check": "tsc --pretty --noEmit",
-    "build": "next build",
-    "start": "next start",
-    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\"",
-    "postinstall": "prisma generate",
+    "build": "turbo run build --scope=\"@calcom/web\" --include-dependencies",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db-deploy": "turbo run db-deploy",
+    "db-seed": "turbo run db-seed",
+    "db-studio": "yarn workspace @calcom/prisma db-studio",
+    "deploy": "turbo run deploy",
+    "dev": "turbo run dev --scope=\"@calcom/web\"",
+    "dev:website": "yarn predev && turbo run dev --scope=\"@calcom/web\" --scope=\"@calcom/website\"",
+    "docs-dev": "yarn predev && turbo run dev --scope=\"@calcom/docs\"",
+    "docs-build": "turbo run build --scope=\"@calcom/docs\" --include-dependencies",
+    "docs-start": "turbo run start --scope=\"@calcom/docs\"",
+    "dx": "yarn predev && turbo run dx",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "heroku-postbuild": "turbo run @calcom/web#build",
+    "lint": "turbo run lint",
+    "lint:report": "turbo run lint:report",
     "pre-commit": "lint-staged",
-    "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
+    "predev": "dotenv-checker --schema .env.example --env .env",
     "prepare": "husky install",
     "check-changed-files": "yarn ts-node scripts/ts-check-changed-files.ts"
   },
@@ -98,55 +102,30 @@
     "zod": "^3.8.2"
   },
   "devDependencies": {
-    "@microsoft/microsoft-graph-types-beta": "0.15.0-preview",
-    "@trivago/prettier-plugin-sort-imports": "2.0.4",
-    "@types/accept-language-parser": "1.5.2",
-    "@types/async": "^3.2.10",
-    "@types/bcryptjs": "^2.4.2",
-    "@types/jest": "^27.0.3",
-    "@types/lodash": "^4.14.177",
-    "@types/micro": "^7.3.6",
-    "@types/node": "^16.11.10",
-    "@types/nodemailer": "^6.4.4",
-    "@types/qrcode": "^1.4.1",
-    "@types/react": "^17.0.36",
-    "@types/react-phone-number-input": "^3.0.13",
-    "@types/stripe": "^8.0.417",
-    "@types/uuid": "8.3.1",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
-    "autoprefixer": "^10.3.1",
-    "babel-jest": "^27.3.1",
-    "cross-env": "^7.0.3",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-react": "^7.27.1",
-    "eslint-plugin-react-hooks": "^4.3.0",
+    "dotenv-checker": "^1.1.5",
     "husky": "^7.0.1",
-    "jest": "^27.2.2",
-    "jest-playwright": "^0.0.1",
-    "jest-playwright-preset": "^1.7.0",
-    "kont": "^0.5.1",
-    "lint-staged": "^11.1.2",
-    "mockdate": "^3.0.5",
-    "npm-run-all": "^4.1.5",
-    "playwright": "^1.16.2",
-    "postcss": "^8.3.11",
-    "prettier": "^2.3.2",
-    "prisma": "^2.30.2",
-    "tailwindcss": "^2.2.19",
-    "ts-jest": "^27.0.7",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.5.2"
+    "lint-staged": "^12.3.5",
+    "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "turbo": "latest"
   },
   "lint-staged": {
-    "./{*,{ee,pages,components,lib}/**/*}.{js,ts,jsx,tsx}": [
+    "apps/**/*.{js,ts,jsx,tsx}": [
       "prettier --write",
-      "eslint"
+      "eslint --fix"
     ],
-    "./prisma/schema.prisma": [
+    "*.json": [
+      "prettier --write"
+    ],
+    "packages/prisma/schema.prisma": [
       "prisma format"
     ]
-  }
+  },
+  "engines": {
+    "node": ">=14.x <15",
+    "npm": ">=7.0.0",
+    "yarn": ">=1.19.0 < 2.0.0"
+  },
+  "packageManager": "yarn@1.22.17"
 }
